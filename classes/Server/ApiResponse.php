@@ -54,7 +54,7 @@
 namespace Ecjia\App\Ucserver\Server;
 
 use Royalcms\Component\Http\Response;
-use Royalcms\Component\Ucserver\Utilities\Serialize;
+use Ecjia\App\Ucserver\Utilities\Serialize;
 
 class ApiResponse extends Response
 {
