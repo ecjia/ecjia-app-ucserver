@@ -55,7 +55,7 @@ class ucserver_tool_menu_api extends Component_Event_Api
 
     public function call(&$options)
     {
-        $menus = ecjia_admin::make_admin_menu('21_ucenter_list', 'Ucenter', RC_Uri::url('ucenter/admin/init'), 21)->add_purview('ucenter_manage');
+        $menus = ecjia_admin::make_admin_menu('21_ucenter_list', 'Ucenter', RC_Uri::url('ucserver/admin/init'), 21)->add_purview('ucenter_manage');
         return $menus;
     }
 }

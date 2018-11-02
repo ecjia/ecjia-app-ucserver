@@ -56,12 +56,12 @@
 					<td class="hide-edit-area">
 						{$val.name}
 						<div class="edit-list">
-							<a class="data-pjax" href='{RC_Uri::url("ucenter/admin/edit", "id={$val.appid}")}' title="编辑">编辑</a>&nbsp;|&nbsp;
-				      		<a class="ajaxremove ecjiafc-red" data-toggle="ajaxremove" data-msg="您确定要删除该应用吗？" href='{RC_Uri::url("ucenter/admin/remove","id={$val.appid}")}' title="删除">删除</a>
+							<a class="data-pjax" href='{RC_Uri::url("ucserver/admin/edit", "id={$val.appid}")}' title="编辑">编辑</a>&nbsp;|&nbsp;
+				      		<a class="ajaxremove ecjiafc-red" data-toggle="ajaxremove" data-msg="您确定要删除该应用吗？" href='{RC_Uri::url("ucserver/admin/remove","id={$val.appid}")}' title="删除">删除</a>
 						</div>
 					</td>
 					<td>{$val.url}</td>
-					<td class="app_linkstatus" data-href="{RC_Uri::url('ucenter/admin/ping')}" data-url="{$val.url}" data-ip="{$val.ip}" data-appid="{$val.appid}" id="app_{$val.appid}"></td>
+					<td class="app_linkstatus" data-href="{RC_Uri::url('ucserver/admin/ping')}" data-url="{$val.url}" data-ip="{$val.ip}" data-appid="{$val.appid}" id="app_{$val.appid}"></td>
 				</tr>
 				<!--  {foreachelse} -->
 				<tr><td class="no-records" colspan="6">{lang key='system::system.no_records'}</td></tr>

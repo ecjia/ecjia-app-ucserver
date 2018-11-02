@@ -46,7 +46,7 @@
 //
 defined('IN_ECJIA') or exit('No permission resources.');
 
-use Ecjia\App\Ucenter\Requests\CreateApplicationFormRequest;
+use Ecjia\App\Ucserver\Requests\CreateApplicationFormRequest;
 
 /**
  * Ucenter
@@ -67,15 +67,15 @@ class admin extends ecjia_admin
         RC_Script::enqueue_script('jquery-uniform');
         RC_Script::enqueue_script('jquery-chosen');
 
-        Ecjia\App\Ucenter\Helper::assign_adminlog_content();
+        Ecjia\App\Ucserver\Helper::assign_adminlog_content();
         
         RC_Script::enqueue_script('admin_ucenter', RC_App::apps_url('statics/js/admin_ucenter.js', __FILE__));
-        ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here('Ucenter', RC_Uri::url('ucenter/admin/init')));
+        ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here('Ucenter', RC_Uri::url('ucserver/admin/init')));
     }
 
     public function init()
     {
-        $this->admin_priv('ucenter_manage');
+        $this->admin_priv('ucserver_manage');
 
         $this->assign('ur_here', '应用列表');
 
@@ -85,8 +85,8 @@ class admin extends ecjia_admin
         $list = $this->get_list();
         $this->assign('list', $list);
 
-        $this->assign('action_link', array('text' => '添加新应用', 'href' => RC_Uri::url('ucenter/admin/add')));
-        $this->assign('search_action', RC_Uri::url('ucenter/admin/init'));
+        $this->assign('action_link', array('text' => '添加新应用', 'href' => RC_Uri::url('ucserver/admin/add')));
+        $this->assign('search_action', RC_Uri::url('ucserver/admin/init'));
 
         $this->display('ucenter_list.dwt');
     }
@@ -97,8 +97,8 @@ class admin extends ecjia_admin
         $url = $this->request->input('url');
         $appid = intval($this->request->input('appid'));
         
-        $app = with(new Ecjia\App\Ucenter\Repositories\ApplicationRepository());
-        $note = new Ecjia\App\Ucenter\AppNote();
+        $app = with(new Ecjia\App\Ucserver\Repositories\ApplicationRepository());
+        $note = new Ecjia\App\Ucserver\AppNote();
         $url = $note->getUrlCode('test', '', $appid);
         $status = $app->testApi($url, $ip);
         
@@ -116,15 +116,15 @@ class admin extends ecjia_admin
         ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here('添加新应用'));
 
         $this->assign('ur_here', '添加新应用');
-        $this->assign('action_link', array('href' => RC_Uri::url('ucenter/admin/init'), 'text' => '应用列表'));
+        $this->assign('action_link', array('href' => RC_Uri::url('ucserver/admin/init'), 'text' => '应用列表'));
 
-        $this->assign('form_action', RC_Uri::url('ucenter/admin/update'));
+        $this->assign('form_action', RC_Uri::url('ucserver/admin/update'));
 
         $data['synlogin'] = 0;
         $data['recvnote'] = 0;
         $this->assign('data', $data);
 
-        $typelist = RC_Package::package('app::ucenter')->loadConfig('uctypes');
+        $typelist = RC_Package::package('app::ucserver')->loadConfig('uctypes');
         $this->assign('typelist', $typelist);
 
         $this->display('ucenter_edit.dwt');
@@ -137,14 +137,14 @@ class admin extends ecjia_admin
         ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here('编辑应用'));
 
         $this->assign('ur_here', '编辑应用');
-        $this->assign('action_link', array('href' => RC_Uri::url('ucenter/admin/init'), 'text' => '应用列表'));
-        $this->assign('form_action', RC_Uri::url('ucenter/admin/update'));
+        $this->assign('action_link', array('href' => RC_Uri::url('ucserver/admin/init'), 'text' => '应用列表'));
+        $this->assign('form_action', RC_Uri::url('ucserver/admin/update'));
 
         $id = intval($_GET['id']);
-        $data = with(new Ecjia\App\Ucenter\Repositories\ApplicationRepository)->getApp($id);
+        $data = with(new Ecjia\App\Ucserver\Repositories\ApplicationRepository)->getApp($id);
         $this->assign('data', $data);
 
-        $typelist = RC_Package::package('app::ucenter')->loadConfig('uctypes');
+        $typelist = RC_Package::package('app::ucserver')->loadConfig('uctypes');
         $this->assign('typelist', $typelist);
 
         $this->display('ucenter_edit.dwt');
@@ -166,14 +166,14 @@ class admin extends ecjia_admin
         $recvnote = intval($_POST['recvnote']);
         
         $apifilename = $apifilename ? $apifilename : 'uc.php';
-        $authkey = $authkey ? $authkey : Ecjia\App\Ucenter\Helper::generateAuthKey();
-        $authkey = Ecjia\App\Ucenter\Helper::authcode($authkey, 'ENCODE', UC_MYKEY);
+        $authkey = $authkey ? $authkey : Ecjia\App\Ucserver\Helper::generateAuthKey();
+        $authkey = Ecjia\App\Ucserver\Helper::authcode($authkey, 'ENCODE', UC_MYKEY);
 
-        if (!Ecjia\App\Ucenter\Helper::checkUrl($url)) {
+        if (!Ecjia\App\Ucserver\Helper::checkUrl($url)) {
             return $this->showmessage('接口 URL 地址不合法', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
         }
 
-        if (!empty($ip) && !Ecjia\App\Ucenter\Helper::checkIp($ip)) {
+        if (!empty($ip) && !Ecjia\App\Ucserver\Helper::checkIp($ip)) {
             return $this->showmessage('IP 地址不合法', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
         }
 
@@ -195,7 +195,7 @@ class admin extends ecjia_admin
         	
             $id = RC_DB::table('ucenter_applications')->insertGetId($data);
             $message = '添加成功';
-            ecjia_admin::admin_log($name, 'add', 'ucenter_app');
+            ecjia_admin::admin_log($name, 'add', 'ucserver_app');
         } else {
         	$count = RC_DB::table('ucenter_applications')->where('appid', '!=', $id)->where('name', $name)->count();
         	if ($count != 0) {
@@ -204,19 +204,19 @@ class admin extends ecjia_admin
         	
             RC_DB::table('ucenter_applications')->where('appid', $id)->update($data);
             $message = '编辑成功';
-            ecjia_admin::admin_log($name, 'edit', 'ucenter_app');
+            ecjia_admin::admin_log($name, 'edit', 'ucserver_app');
         }
-        return $this->showmessage($message, ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => RC_Uri::url('ucenter/admin/edit', array('id' => $id))));
+        return $this->showmessage($message, ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => RC_Uri::url('ucserver/admin/edit', array('id' => $id))));
     }
 
     public function remove()
     {
-    	$this->admin_priv('ucenter_delete', ecjia::MSGTYPE_JSON);
+    	$this->admin_priv('ucserver_delete', ecjia::MSGTYPE_JSON);
     	
         $id = intval($_GET['id']);
         
         $name = RC_DB::table('ucenter_applications')->where('appid', $id)->pluck('name');
-        ecjia_admin::admin_log($name, 'remove', 'ucenter_app');
+        ecjia_admin::admin_log($name, 'remove', 'ucserver_app');
         
         RC_DB::table('ucenter_applications')->where('appid', $id)->delete();
         
@@ -225,7 +225,7 @@ class admin extends ecjia_admin
 
     public function batch_remove()
     {
-    	$this->admin_priv('ucenter_delete', ecjia::MSGTYPE_JSON);
+    	$this->admin_priv('ucserver_delete', ecjia::MSGTYPE_JSON);
     	
         $appid_str = trim($_POST['appid']);
         $appid_list = explode(',', $appid_str);
@@ -233,11 +233,11 @@ class admin extends ecjia_admin
         $list = RC_DB::table('ucenter_applications')->whereIn('appid', $appid_list)->get();
         if (!empty($list)) {
         	foreach ($list as $k => $v) {
-        		ecjia_admin::admin_log($v['name'], 'batch_remove', 'ucenter_app');
+        		ecjia_admin::admin_log($v['name'], 'batch_remove', 'ucserver_app');
         	}
         }
         RC_DB::table('ucenter_applications')->whereIn('appid', $appid_list)->delete();
-        return $this->showmessage('删除成功', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => RC_Uri::url('ucenter/admin/init')));
+        return $this->showmessage('删除成功', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => RC_Uri::url('ucserver/admin/init')));
     }
 
     private function get_list()

@@ -55,7 +55,7 @@ class Helper
      */
     public static function assign_adminlog_content()
     {
-        ecjia_admin_log::instance()->add_object('ucenter_app', 'Ucenter应用');
+        ecjia_admin_log::instance()->add_object('ucserver_app', 'Ucenter应用');
     }
 
     /**

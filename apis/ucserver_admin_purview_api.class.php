@@ -56,9 +56,9 @@ class ucserver_admin_purview_api extends Component_Event_Api
     public function call(&$options)
     {
         $purviews = array(
-            array('action_name' => 'Ucenter应用管理', 'action_code' => 'ucenter_manage', 'relevance' => ''),
-            array('action_name' => 'Ucenter应用更新', 'action_code' => 'ucenter_update', 'relevance' => ''),
-        	array('action_name' => 'Ucenter应用删除', 'action_code' => 'ucenter_update', 'relevance' => ''),
+            array('action_name' => 'Ucenter应用管理', 'action_code' => 'ucserver_manage', 'relevance' => ''),
+            array('action_name' => 'Ucenter应用更新', 'action_code' => 'ucserver_update', 'relevance' => ''),
+        	array('action_name' => 'Ucenter应用删除', 'action_code' => 'ucserver_update', 'relevance' => ''),
         );
 
         return $purviews;
