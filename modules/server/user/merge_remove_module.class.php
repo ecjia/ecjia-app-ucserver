@@ -44,8 +44,8 @@
 //
 //  ---------------------------------------------------------------------------------
 //
-use Ecjia\App\Ucenter\Server\ApiBase;
-use Ecjia\App\Ucenter\Contracts\ApiHandler;
+use Ecjia\App\Ucserver\Server\ApiBase;
+use Ecjia\App\Ucserver\Contracts\ApiHandler;
 use Royalcms\Component\Http\Request;
 
 class server_user_merge_remove_module extends ApiBase implements ApiHandler

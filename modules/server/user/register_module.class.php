@@ -44,8 +44,8 @@
 //
 //  ---------------------------------------------------------------------------------
 //
-use Ecjia\App\Ucenter\Server\ApiBase;
-use Ecjia\App\Ucenter\Contracts\ApiHandler;
+use Ecjia\App\Ucserver\Server\ApiBase;
+use Ecjia\App\Ucserver\Contracts\ApiHandler;
 use Royalcms\Component\Http\Request;
 
 class server_user_register_module extends ApiBase implements ApiHandler
@@ -61,8 +61,8 @@ class server_user_register_module extends ApiBase implements ApiHandler
         $answer     = $this->input('answer');
         $regip      = $this->input('regip');
         
-        $user = new Ecjia\App\Ucenter\Models\UserModel;
-        $checkUser = new Ecjia\App\Ucenter\Server\CheckUser($user);
+        $user = new Ecjia\App\Ucserver\Models\UserModel;
+        $checkUser = new Ecjia\App\Ucserver\Server\CheckUser($user);
         
         if (($status = $checkUser->checkUserName($username)) < 0) {
             return $status;

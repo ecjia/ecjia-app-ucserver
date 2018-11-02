@@ -44,8 +44,8 @@
 //
 //  ---------------------------------------------------------------------------------
 //
-use Ecjia\App\Ucenter\Server\ApiBase;
-use Ecjia\App\Ucenter\Contracts\ApiHandler;
+use Ecjia\App\Ucserver\Server\ApiBase;
+use Ecjia\App\Ucserver\Contracts\ApiHandler;
 use Royalcms\Component\Http\Request;
 
 class server_user_check_username_module extends ApiBase implements ApiHandler
@@ -55,7 +55,7 @@ class server_user_check_username_module extends ApiBase implements ApiHandler
     {
         $this->initInput();
         $username = $this->input('username');
-        if (($status = with(new Ecjia\App\Ucenter\Server\CheckUser(new Ecjia\App\Ucenter\Models\UserModel))->checkUserName($username)) < 0) {
+        if (($status = with(new Ecjia\App\Ucserver\Server\CheckUser(new Ecjia\App\Ucserver\Models\UserModel))->checkUserName($username)) < 0) {
             return $status;
         } else {
             return 1;

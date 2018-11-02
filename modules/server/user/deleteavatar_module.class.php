@@ -44,8 +44,8 @@
 //
 //  ---------------------------------------------------------------------------------
 //
-use Ecjia\App\Ucenter\Server\ApiBase;
-use Ecjia\App\Ucenter\Contracts\ApiHandler;
+use Ecjia\App\Ucserver\Server\ApiBase;
+use Ecjia\App\Ucserver\Contracts\ApiHandler;
 use Royalcms\Component\Http\Request;
 
 class server_user_deleteavatar_module extends ApiBase implements ApiHandler
@@ -56,7 +56,7 @@ class server_user_deleteavatar_module extends ApiBase implements ApiHandler
         $this->initInput();
         $uid = $this->input('uid');
         
-        $user = new Ecjia\App\Ucenter\Models\UserModel;
+        $user = new Ecjia\App\Ucserver\Models\UserModel;
         $user->delete_useravatar($uid);
     }
 }

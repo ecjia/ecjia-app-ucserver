@@ -44,8 +44,8 @@
 //
 //  ---------------------------------------------------------------------------------
 //
-use Ecjia\App\Ucenter\Server\ApiBase;
-use Ecjia\App\Ucenter\Contracts\ApiHandler;
+use Ecjia\App\Ucserver\Server\ApiBase;
+use Ecjia\App\Ucserver\Contracts\ApiHandler;
 use Royalcms\Component\Http\Request;
 
 class server_user_edit_module extends ApiBase implements ApiHandler
@@ -62,8 +62,8 @@ class server_user_edit_module extends ApiBase implements ApiHandler
         $questionid     = $this->input('questionid');
         $answer         = $this->input('answer');
         
-        $user = new Ecjia\App\Ucenter\Models\UserModel;
-        $checkUser = new Ecjia\App\Ucenter\Server\CheckUser($user);
+        $user = new Ecjia\App\Ucserver\Models\UserModel;
+        $checkUser = new Ecjia\App\Ucserver\Server\CheckUser($user);
         
         if(!$ignoreoldpw && $email && ($status = $checkUser->checkEmail($email, $username)) < 0) {
             return $status;

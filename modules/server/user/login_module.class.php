@@ -44,8 +44,8 @@
 //
 //  ---------------------------------------------------------------------------------
 //
-use Ecjia\App\Ucenter\Server\ApiBase;
-use Ecjia\App\Ucenter\Contracts\ApiHandler;
+use Ecjia\App\Ucserver\Server\ApiBase;
+use Ecjia\App\Ucserver\Contracts\ApiHandler;
 use Royalcms\Component\Http\Request;
 
 class server_user_login_module extends ApiBase implements ApiHandler
@@ -62,7 +62,7 @@ class server_user_login_module extends ApiBase implements ApiHandler
         $answer         = $this->input('answer');
         $ip             = $this->input('ip');
         
-        $userModel = new Ecjia\App\Ucenter\Models\UserModel;
+        $userModel = new Ecjia\App\Ucserver\Models\UserModel;
         if ($isuid == 1) {
             $user = $userModel->getUserByUserId($username);
         } elseif ($isuid == 2) {
