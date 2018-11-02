@@ -37,15 +37,5 @@ class IndexController
         return $response;
     }
     
-    
-    
-    public function test()
-    {
-//        $b = with(new \Ecjia\App\Ucenter\Repositories\ApplicationRepository)->getApp(1);
-//        dd($b);
-        
-         $a = \RC_Ucenter::ucUserCheckName('test007');
-//         $a = \RC_Ucenter::ucCheckVersion();
-         _dump($a,1);
-    }
+
 }

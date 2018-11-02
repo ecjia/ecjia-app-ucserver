@@ -3,6 +3,7 @@
 namespace Ecjia\App\Ucserver\Server;
 
 use ecjia_api;
+use Ecjia\App\Ucserver\Helper;
 
 class ApiBase extends ecjia_api
 {
@@ -58,7 +59,7 @@ class ApiBase extends ecjia_api
         if ($input) {
             $input = Helper::authcode($input, 'DECODE', $this->authkey);
             parse_str($input, $this->input);
-            $this->input = self::daddslashes($this->input, true);
+            $this->input = Helper::daddslashes($this->input, true);
             $agent = $getagent ? $getagent : $this->input['agent'];
             
             if (($getagent && $getagent != $this->input['agent']) || 

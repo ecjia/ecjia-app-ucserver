@@ -50,7 +50,7 @@ defined('IN_ECJIA') or exit('No permission resources.');
  * 后台菜单API
  * @author royalwang
  */
-class ucenter_tool_menu_api extends Component_Event_Api
+class ucserver_tool_menu_api extends Component_Event_Api
 {
 
     public function call(&$options)
