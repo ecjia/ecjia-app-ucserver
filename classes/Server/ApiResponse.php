@@ -75,9 +75,6 @@ class ApiResponse extends Response
         elseif (is_array($data)) {
             $data = Serialize::serialize($data, 1);
         }
-        else {
-            $data = '';
-        }
 
         $this->sourceData = $data;
 

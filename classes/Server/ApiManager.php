@@ -121,8 +121,7 @@ class ApiManager
         if (is_ecjia_error($handle)) {
             $data = $handle;
         } else {
-            $request = $this->compatibleHttpKernelRequest($this->request);
-            $data = $handle->handleRequest($request);
+            $data = $handle->handleRequest($this->request);
         }
 
         return new ApiResponse($data);
@@ -159,17 +158,6 @@ class ApiManager
 
         $className = $router->getClassName();
         return new $className;
-    }
-
-    /**
-     * 原Http组件转换为HttpKernel组件
-     * @param $request
-     */
-    protected function compatibleHttpKernelRequest()
-    {
-        //原Http组件转换为HttpKernel组件
-        $request = \Royalcms\Component\HttpKernel\Request::createMyFromBase($this->request);
-        return $request;
     }
 
 }

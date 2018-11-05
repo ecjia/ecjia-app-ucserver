@@ -79,6 +79,7 @@ class ApiBase extends ecjia_api
             exit('Invalid input');
             
         }
+
     }
     
     
@@ -102,7 +103,7 @@ class ApiBase extends ecjia_api
                 return NULL;
             }
         }
-        return isset($this->input[$k]) ? (is_array($this->input[$k]) ? $this->input[$k] : trim($this->input[$k])) : NULL;
+        return isset($this->input[$k]) ? (is_array($this->input[$k]) ? $this->input[$k] : trim($this->input[$k])) : null;
     }
     
     
