@@ -51,6 +51,15 @@ use Royalcms\Component\Http\Request;
 class server_user_check_username_module extends ApiBase implements ApiHandler
 {
 
+    /**
+     * 检查用户名
+     * 已经修复
+     *
+     * @param string $username 用户名
+     *
+     * @param Request $request
+     * @return int
+     */
     public function handleRequest(Request $request)
     {
         $this->initInput();

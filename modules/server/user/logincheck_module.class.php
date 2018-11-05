@@ -51,6 +51,12 @@ use Royalcms\Component\Http\Request;
 class server_user_logincheck_module extends ApiBase implements ApiHandler
 {
 
+    /**
+     * 已经修复
+     *
+     * @param Request $request
+     * @return mixed
+     */
     public function handleRequest(Request $request)
     {
         $this->initInput();

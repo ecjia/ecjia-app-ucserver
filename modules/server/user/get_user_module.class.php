@@ -51,6 +51,16 @@ use Royalcms\Component\Http\Request;
 class server_user_get_user_module extends ApiBase implements ApiHandler
 {
 
+    /**
+     * 获取用户数据
+     * 已经修复
+     *
+     * @param string $username 用户名
+     * @param bool $isuid 用户名 是否使用用户 ID获取 1:使用用户 ID获取 0:(默认值) 使用用户名获取
+     *
+     * @param Request $request
+     * @return array|int
+     */
     public function handleRequest(Request $request)
     {
         $this->initInput();
@@ -64,7 +74,7 @@ class server_user_get_user_module extends ApiBase implements ApiHandler
         }
         
         if ($status) {
-            return array($status['uid'], $status['username'], $status['email']);
+            return array($status['user_id'], $status['user_name'], $status['email']);
         } else {
             return 0;
         }

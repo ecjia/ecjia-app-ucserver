@@ -51,9 +51,29 @@ use Royalcms\Component\Http\Request;
 class server_user_login_module extends ApiBase implements ApiHandler
 {
 
+    const ERROR_USER_NOT_EXIST = -1; //User does not exist
+    const ERROR_WRONG_PASSWORD = -2; //Wrong password
+    const ERROR_SECURITY_QUESTION_WRONG = -3; //Security question wrong
+    const ERROR_LOGIN_FAILURES_LIMIT = -4; //Login failures exceeded limit
+
+    /**
+     * 用户登录
+     * 已经修复
+     *
+     * @param string $username 用户名 / 用户 ID
+     * @param string $password 密码
+     * @param bool $isuid 是否使用用户 ID登录 1:使用用户 ID登录 0:(默认值) 使用用户名登录
+     * @param bool $checkques 是否验证安装提问 1:验证安全提问 0:(默认值) 不验证安全提问
+     * @param integer $questionid 安全提问索引
+     * @param string $answer 安全提问答案
+     *
+     * @param Request $request
+     * @return array
+     */
     public function handleRequest(Request $request)
     {
         $this->initInput();
+
         $isuid          = $this->input('isuid');
         $username       = $this->input('username');
         $password       = $this->input('password');
@@ -61,29 +81,51 @@ class server_user_login_module extends ApiBase implements ApiHandler
         $questionid     = $this->input('questionid');
         $answer         = $this->input('answer');
         $ip             = $this->input('ip');
-        
+
+        /**
+         * $isuid = 0 使用username登录
+         * $isuid = 1 使用UID登录
+         * $isuid = 2 使用EMAIL登录
+         * $isuid = 3 自动选择
+         * $isuid = 6 使用MOBILE登录
+         */
+
         $userModel = new Ecjia\App\Ucserver\Models\UserModel;
+
+        $login_failedtime = 5;
+
+        if($ip && $login_failedtime && !$loginperm = $userModel->canDoLogin($username, $ip)) {
+            $status = self::ERROR_LOGIN_FAILURES_LIMIT;
+            return array($status, '', $password, '', 0);
+        }
+
         if ($isuid == 1) {
             $user = $userModel->getUserByUserId($username);
         } elseif ($isuid == 2) {
             $user = $userModel->getUserByEmail($username);
-        } elseif ($isuid == 3) {
+        } elseif ($isuid == 6) {
             $user = $userModel->getUserByMobile($username);
         } else {
             $user = $userModel->getUserByUserName($username);
         }
-        
+
         $passwordmd5 = preg_match('/^\w{32}$/', $password) ? $password : md5($password);
         if (empty($user)) {
-            $status = -1;
-        } elseif ($user['password'] != md5($passwordmd5.$user['salt'])) {
-            $status = -2;
+            $status = self::ERROR_USER_NOT_EXIST;
+        } elseif ($user['password'] != md5($passwordmd5.$user['ec_salt'])) {
+            $status = self::ERROR_WRONG_PASSWORD;
         } else {
-            $status = $user['uid'];
+            $status = $user['user_id'];
+        }
+
+        //验证安全问题跳过
+
+        if($ip && $login_failedtime && $status <= 0) {
+            $userModel->loginfailed($username, $ip);
         }
         
-        $merge = $status != -1 && !$isuid ? 1 : 0;
-        return array($status, $user['username'], $password, $user['email'], $merge);
+        $merge = $status != self::ERROR_USER_NOT_EXIST && !$isuid && $userModel->check_mergeuser($username) ? 1 : 0;
+        return array($status, $user['user_name'], $password, $user['email'], $merge);
     }
 }
 

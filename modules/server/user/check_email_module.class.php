@@ -51,6 +51,15 @@ use Royalcms\Component\Http\Request;
 class server_user_check_email_module extends ApiBase implements ApiHandler
 {
 
+    /**
+     * 检查 Email 地址
+     * 已经修复
+     *
+     * @param string email Email
+     *
+     * @param Request $request
+     * @return mixed
+     */
     public function handleRequest(Request $request)
     {
         $this->initInput();
