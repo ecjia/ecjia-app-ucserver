@@ -111,6 +111,29 @@ class UserModel extends Model
         return $this->getUserByUserName($username);
     }
 
+    public function check_mergeuser($username)
+    {
+        return 0;
+    }
+
+    public function check_emailexists($email, $username = '')
+    {
+        $model = $this->where('email', $email);
+        if ($username) {
+            $model->where('username', '<>', $username);
+        }
+
+        $email = $model->pluck('email');
+
+        return $email;
+    }
+
+
+    public function check_emailformat($email)
+    {
+        return strlen($email) > 6 && strlen($email) <= 60 && preg_match('/^([a-z0-9\-_.+]+)@([a-z0-9\-]+[.][a-z0-9\-.]+)$/', $email);
+    }
+
     /**
      * 获取用户数据
      */
@@ -144,22 +167,7 @@ class UserModel extends Model
     }
     
     
-    public function check_emailexists($email, $username = '') {
-        $model = $this->where('email', $email);
-        if ($username) {
-            $model->where('username', '<>', $username);
-        }
-        
-        $email = $model->pluck('email');
-        
-        return $email;
-    }
-    
-    
-    public function check_emailformat($email)
-    {
-        return strlen($email) > 6 && strlen($email) <= 60 && preg_match('/^([a-z0-9\-_.+]+)@([a-z0-9\-]+[.][a-z0-9\-.]+)$/', $email);
-    }
+
 
     public function canDoLogin($username, $ip = '')
     {
