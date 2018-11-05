@@ -184,14 +184,14 @@ class UserModel extends Model
             }
         }
 
-        if(empty($ip_check) || (SYS_TIME - $ip_check['lastupdate'] > $expire)) {
+        if (empty($ip_check) || (SYS_TIME - $ip_check['lastupdate'] > $expire)) {
             $ip_check = array();
-            RC_DB::insert("REPLACE INTO " . RC_DB::getTableFullName('ucenter_failedlogins'). " (`ip`, `count`, `lastupdate`) values('{$ip}', '0', '{SYS_TIME}')");
+            RC_DB::insert("REPLACE INTO " . RC_DB::getTableFullName('ucenter_failedlogins'). " (`ip`, `count`, `lastupdate`) values('{$ip}', '0', ".SYS_TIME.")");
         }
 
-        if(empty($user_check) || (SYS_TIME - $user_check['lastupdate'] > $expire)) {
+        if (empty($user_check) || (SYS_TIME - $user_check['lastupdate'] > $expire)) {
             $user_check = array();
-            RC_DB::insert("REPLACE INTO " . RC_DB::getTableFullName('ucenter_failedlogins'). " (`ip`, `count`, `lastupdate`) values('{$username}', '0', '{SYS_TIME}')");
+            RC_DB::insert("REPLACE INTO " . RC_DB::getTableFullName('ucenter_failedlogins'). " (`ip`, `count`, `lastupdate`) values('{$username}', '0', ".SYS_TIME.")");
         }
 
         if ($ip_check || $user_check) {
@@ -202,6 +202,18 @@ class UserModel extends Model
         RC_DB::table('ucenter_failedlogins')->where('lastupdate', '<', SYS_TIME - ($expire + 1))->delete();
 
         return $check_times;
+    }
+
+
+    public function loginfailed($username, $ip = '')
+    {
+        $username = substr(md5($username), 8, 15);
+        if (!$ip) {
+            $ip = RC_Ip::client_ip();
+        }
+        RC_DB::table('ucenter_failedlogins')->where('ip', $ip)->whereOr('ip', $username)->increment('count', 1, [
+            'lastupdate' => SYS_TIME
+        ]);
     }
     
     

@@ -65,7 +65,7 @@ class ApiResponse extends Response
      * Set the content on the response.
      *
      * @param  mixed  $content
-     * @return $this
+     * @return
      */
     public function setContent($data)
     {
