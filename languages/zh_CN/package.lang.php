@@ -51,7 +51,7 @@ defined('IN_ECJIA') or exit('No permission resources.');
  * @author songqian
  */
 return array(
-	'ucserver' 		=> 'UcServer',
+	'ucserver' 		=> 'UC服务端',
 	'ucserver_desc'	=> 'UCenter是各个产品之间信息直接传递的一个桥梁，通过UcServer无缝整合系列产品，实现用户的一站式注册、登录、退出以及社区其他数据的交互。'
 );
 
