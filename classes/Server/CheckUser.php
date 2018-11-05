@@ -44,6 +44,18 @@ class CheckUser
 
         return 1;
     }
-    
+
+    /**
+     * 检测用户是否允许登录
+     *
+     * @param $username
+     * @param string $ip
+     * @return int|mixed
+     */
+    public function checkCanLogin($username, $ip = '')
+    {
+        return $this->user->canDoLogin($username, $ip);
+    }
+
     
 }

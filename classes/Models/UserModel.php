@@ -49,6 +49,8 @@ namespace Ecjia\App\Ucserver\Models;
 
 use Royalcms\Component\Database\Eloquent\Model;
 use Ecjia\App\Ucserver\Helper;
+use RC_DB;
+use RC_Ip;
 
 class UserModel extends Model
 {
@@ -154,8 +156,52 @@ class UserModel extends Model
     }
     
     
-    public function check_emailformat($email) {
+    public function check_emailformat($email)
+    {
         return strlen($email) > 6 && strlen($email) <= 60 && preg_match('/^([a-z0-9\-_.+]+)@([a-z0-9\-]+[.][a-z0-9\-.]+)$/', $email);
+    }
+
+    public function canDoLogin($username, $ip = '')
+    {
+
+        $check_times = 5;
+
+        $username = substr(md5($username), 8, 15);
+        $expire = 15 * 60;
+        if(!$ip) {
+            //获取客户端IP
+            $ip = RC_Ip::client_ip();
+        }
+
+        $ip_check = $user_check = array();
+
+        $row = RC_DB::table('ucenter_failedlogins')->where('ip', $ip)->whereOr('ip', $username)->first();
+        if (! empty($row)) {
+            if($row['ip'] === $username) {
+                $user_check = $row;
+            } elseif($row['ip'] === $ip) {
+                $ip_check = $row;
+            }
+        }
+
+        if(empty($ip_check) || (SYS_TIME - $ip_check['lastupdate'] > $expire)) {
+            $ip_check = array();
+            RC_DB::insert("REPLACE INTO " . RC_DB::getTableFullName('ucenter_failedlogins'). " (`ip`, `count`, `lastupdate`) values('{$ip}', '0', '{SYS_TIME}')");
+        }
+
+        if(empty($user_check) || (SYS_TIME - $user_check['lastupdate'] > $expire)) {
+            $user_check = array();
+            RC_DB::insert("REPLACE INTO " . RC_DB::getTableFullName('ucenter_failedlogins'). " (`ip`, `count`, `lastupdate`) values('{$username}', '0', '{SYS_TIME}')");
+        }
+
+        if ($ip_check || $user_check) {
+            $time_left = min(($check_times - $ip_check['count']), ($check_times - $user_check['count']));
+            return $time_left;
+        }
+
+        RC_DB::table('ucenter_failedlogins')->where('lastupdate', '<', SYS_TIME - ($expire + 1))->delete();
+
+        return $check_times;
     }
     
     
@@ -227,6 +273,9 @@ class UserModel extends Model
     public function delete_useravatar($uidsarr) {
         
     }
+
+
+
     
 }
 
