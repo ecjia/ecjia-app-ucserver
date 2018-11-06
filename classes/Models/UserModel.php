@@ -51,6 +51,7 @@ use Royalcms\Component\Database\Eloquent\Model;
 use Ecjia\App\Ucserver\Helper;
 use RC_DB;
 use RC_Ip;
+use RC_Time;
 
 class UserModel extends Model
 {
@@ -139,7 +140,7 @@ class UserModel extends Model
      */
     public function getUserByUserId($id)
     {
-        return $this->where('id', $id)->first()->toArray();
+        return optional($this->where('id', $id)->first())->toArray();
     }
     
     /**
@@ -147,7 +148,7 @@ class UserModel extends Model
      */
     public function getUserByUserName($username)
     {
-        return $this->where('user_name', $username)->first()->toArray();
+        return optional($this->where('user_name', $username)->first())->toArray();
     }
     
     /**
@@ -155,7 +156,7 @@ class UserModel extends Model
      */
     public function getUserByMobile($mobile)
     {
-        return $this->where('mobile_phone', $mobile)->first()->toArray();
+        return optional($this->where('mobile_phone', $mobile)->first())->toArray();
     }
     
     /**
@@ -163,7 +164,7 @@ class UserModel extends Model
      */
     public function getUserByEmail($email)
     {
-        return $this->where('email', $email)->first()->toArray();
+        return optional($this->where('email', $email)->first())->toArray();
     }
     
     
@@ -234,10 +235,22 @@ class UserModel extends Model
 //         }
 //         return $user['uid'];
 //     }
-    
+
+    /**
+     * 添加用户
+     *
+     * @param $username
+     * @param $password
+     * @param $email
+     * @param int $uid
+     * @param string $questionid
+     * @param string $answer
+     * @param string $regip
+     * @return int
+     */
     public function add_user($username, $password, $email, $uid = 0, $questionid = '', $answer = '', $regip = '') 
     {
-        $regip      = empty($regip) ? \RC_Ip::client_ip() : $regip;
+        $regip      = empty($regip) ? RC_Ip::client_ip() : $regip;
         $salt       = substr(uniqid(rand()), -6);
         $password   = md5(md5($password).$salt);
         
@@ -246,11 +259,13 @@ class UserModel extends Model
             'password'  => $password,
             'email'     => $email,
             'last_ip'   => $regip,
-            'reg_time'  => \RC_Time::gmtime(),
-            'salt'      => $salt
+            'reg_time'  => RC_Time::gmtime(),
+            'ec_salt'   => $salt
         ];
         
-        if ($uid) $data['uid'] = intval($uid);
+        if ($uid) {
+//            $data['user_id'] = intval($uid);
+        }
         
         $model = $this->create($data);
         if ($model) {
@@ -261,8 +276,21 @@ class UserModel extends Model
         
         return $uid;
     }
-    
-    public function edit_user($username, $oldpw, $newpw, $email, $ignoreoldpw = 0, $questionid = '', $answer = '') {
+
+    /**
+     * 编辑用户
+     *
+     * @param $username
+     * @param $oldpw
+     * @param $newpw
+     * @param $email
+     * @param int $ignoreoldpw
+     * @param string $questionid
+     * @param string $answer
+     * @return int
+     */
+    public function edit_user($username, $oldpw, $newpw, $email, $ignoreoldpw = 0, $questionid = '', $answer = '')
+    {
         $data = $this->getUserByUserName($username);
         
         if (!$ignoreoldpw && $data['password'] != md5(md5($oldpw).$data['salt'])) {
@@ -279,12 +307,13 @@ class UserModel extends Model
         }
         
         if (!empty($newdata)) {
-            return $this->update($newdata)->where('user_name', $username);
+            return $this->where('user_name', $username)->update($newdata);
         } else {
             return -7;
         }
     }
-    
+
+
     public function delete_user($uidsarr) 
     {
         return 0;
