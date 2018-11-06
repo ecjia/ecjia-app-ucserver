@@ -54,7 +54,7 @@ use RC_Http;
 class ApplicationRepository extends AbstractRepository
 {
 
-	protected $model = 'Ecjia\App\Ucenter\Models\UcenterApplicationsModel';
+	protected $model = 'Ecjia\App\Ucserver\Models\UcenterApplicationsModel';
 	
 	protected $orderBy = ['appid' => 'desc'];
 	
@@ -159,7 +159,7 @@ class ApplicationRepository extends AbstractRepository
 	        }
 	    }
 	    
-	    RC_Cache::app_cache_set('apps', $new_apps, 'ucenter');
+	    RC_Cache::app_cache_set('apps', $new_apps, 'ucserver');
 	    return $new_apps;
 	}
 	
@@ -169,7 +169,7 @@ class ApplicationRepository extends AbstractRepository
 	 */
 	public function getCacheData()
 	{
-	    $cachedata = RC_Cache::app_cache_get('apps', 'ucenter');
+	    $cachedata = RC_Cache::app_cache_get('apps', 'ucserver');
 	    if (empty($cachedata)) {
 	        $cachedata = $this->updateCacheData();
 	    }
@@ -184,7 +184,8 @@ class ApplicationRepository extends AbstractRepository
 	}
 	
 	
-	public function testApi($url, $ip = '') {
+	public function testApi($url, $ip = '')
+    {
 	    $response = RC_Http::remote_get($url);
 	    if (is_ecjia_error($response)) {
 	        return $response;

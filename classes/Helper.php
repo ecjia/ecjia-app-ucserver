@@ -222,7 +222,7 @@ class Helper
 
     /**
      *
-     * @param string $string
+     * @param string|array $string
      * @param boolean $strip
      * @return string
      */

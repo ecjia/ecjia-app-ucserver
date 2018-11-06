@@ -2,10 +2,11 @@
 
 namespace Ecjia\App\Ucserver\Server;
 
-use ecjia_api;
+use Ecjia\App\Ucserver\Repositories\ApplicationRepository;
+use RC_Ip;
 use Ecjia\App\Ucserver\Helper;
 
-class ApiBase extends ecjia_api
+class ApiBase
 {
     /**
      * 用户名检测失败
@@ -37,23 +38,45 @@ class ApiBase extends ecjia_api
      */
     const UC_USER_EMAIL_EXISTS = -6;
 
+
+    /**
+     * @var \Royalcms\Component\Http\Request
+     */
+    protected $request;
+
+    protected $api_version;
+
+    protected $api_release;
     
     protected $input = [];
     
     protected $app = [];
     
     protected $authkey;
+
+    protected $time;
+
+    protected $onlineip;
     
     public function __construct()
     {
-        parent::__construct();
-        
+        $this->request = royalcms('request');
+        $this->time = SYS_TIME;
+        $this->api_release = $this->request->input('release');
+        $this->api_version = $this->request->input('version');
+        $this->onlineip = RC_Ip::client_ip();
+
         $this->initApp();
         
-        $this->authkey = 'V9Tdb5w2Ucl8x9a31by45dg0pbQ5R8l4h7a508y7Xef6E6x5CaH878T2Ody6x0g7';
+        $this->authkey = array_get($this->app, 'authkey');
     }
-    
-    public function initInput($getagent = '')
+
+    /**
+     * 初始化输入参数
+     *
+     * @param null $getagent
+     */
+    public function initInput($getagent = null)
     {
         $input = $this->request->input('input');
         if ($input) {
@@ -81,29 +104,40 @@ class ApiBase extends ecjia_api
         }
 
     }
-    
-    
+
+    /**
+     * 初始化应用
+     */
     public function initApp()
     {
         $appid = intval($this->request->input('appid'));
-        $appid && $this->app = $this->cache['apps'][$appid];
+        if (! empty($appid)) {
+            $this->app = (new ApplicationRepository())->getAppCacheData($appid);
+        }
     }
-    
-    
-    public function input($k) 
+
+    /**
+     * @param $key
+     * @param null $default
+     * @return array|mixed|null|string
+     */
+    public function input($key, $default = null)
     {
-        if ($k == 'uid') {
-            if (is_array($this->input[$k])) {
-                foreach ($this->input[$k] as $value) {
+        if ($key == 'uid') {
+            if (is_array($this->input[$key])) {
+                foreach ($this->input[$key] as $value) {
                     if(!preg_match("/^[0-9]+$/", $value)) {
-                        return NULL;
+                        return null;
                     }
                 }
-            } elseif (!preg_match("/^[0-9]+$/", $this->input[$k])) {
-                return NULL;
+            } elseif (!preg_match("/^[0-9]+$/", $this->input[$key])) {
+                return null;
             }
         }
-        return isset($this->input[$k]) ? (is_array($this->input[$k]) ? $this->input[$k] : trim($this->input[$k])) : null;
+
+        $value = array_get($this->input, $key, $default);
+
+        return is_array($value) ? $value : trim($value);
     }
     
     
