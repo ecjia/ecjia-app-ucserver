@@ -52,6 +52,8 @@ use Ecjia\App\Ucserver\Helper;
 use RC_DB;
 use RC_Ip;
 use RC_Time;
+use RC_Upload;
+use RC_File;
 
 class UserModel extends Model
 {
@@ -166,10 +168,15 @@ class UserModel extends Model
     {
         return optional($this->where('email', $email)->first())->toArray();
     }
-    
-    
 
 
+    /**
+     * 检测用户是否可以登录
+     *
+     * @param $username
+     * @param string $ip
+     * @return int|mixed
+     */
     public function canDoLogin($username, $ip = '')
     {
 
@@ -292,8 +299,15 @@ class UserModel extends Model
     public function edit_user($username, $oldpw, $newpw, $email, $ignoreoldpw = 0, $questionid = '', $answer = '')
     {
         $data = $this->getUserByUserName($username);
+
+        if ($ignoreoldpw) {
+            $isprotected = RC_DB::table('ucenter_protectedmembers')->where('user_id', $data['user_id'])->count();
+            if ($isprotected) {
+                return -8;
+            }
+        }
         
-        if (!$ignoreoldpw && $data['password'] != md5(md5($oldpw).$data['salt'])) {
+        if (!$ignoreoldpw && $data['password'] != md5(md5($oldpw).$data['ec_salt'])) {
             return -1;
         }
         
@@ -303,7 +317,7 @@ class UserModel extends Model
         }
         
         if ($newpw) {
-            $newdata['password'] = md5(md5($newpw).$data['salt']);
+            $newdata['password'] = md5(md5($newpw).$data['ec_salt']);
         }
         
         if (!empty($newdata)) {
@@ -313,14 +327,64 @@ class UserModel extends Model
         }
     }
 
-
+    /**
+     *
+     * @param int|array $uidsarr
+     * @return int
+     */
     public function delete_user($uidsarr) 
     {
+        if (! is_array($uidsarr)) {
+            $uidsarr = (array)$uidsarr;
+        }
+
+        if (!empty($uidsarr)) {
+            return 0;
+        }
+
+        $puids = RC_DB::table('ucenter_protectedmembers')->whereIn('user_id', $uidsarr)->list('user_id');
+
+        $uids = array_diff($uidsarr, $puids);
+
+        if(! empty($uids)) {
+
+            $result = $this->whereIn('user_id', $uids)->delete();
+
+            $this->delete_useravatar($uidsarr);
+
+            //@todo 发送删除其它节点请求
+
+            return $result;
+        }
+
         return 0;
     }
-    
-    public function delete_useravatar($uidsarr) {
-        
+
+
+    public function delete_useravatar($uidsarr)
+    {
+
+        if (! is_array($uidsarr)) {
+            $uidsarr = (array)$uidsarr;
+        }
+
+        if (!empty($uidsarr)) {
+            return 0;
+        }
+
+        foreach ($uidsarr as $uid) {
+            $user = $this->getUserByUserId($uid);
+
+            //@todo 未支持OSS存储
+            $path = RC_Upload::upload_path($user['avatar_img']);
+            if (file_exists($path)) {
+                RC_File::delete($path);
+            }
+
+            $this->where('user_id', $uid)->update(['avatar_img' => '']);
+        }
+
+        return 1;
     }
 
 
