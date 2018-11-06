@@ -53,7 +53,7 @@ use RC_DB;
 use RC_Ip;
 use RC_Time;
 use RC_Upload;
-use RC_File;
+use RC_Storage;
 
 class UserModel extends Model
 {
@@ -83,7 +83,7 @@ class UserModel extends Model
         'visit_count',
         'user_rank',
         'is_special',
-        'salt',
+        'ec_salt',
         'parent_id',
         'flag',
         'alias',
@@ -103,9 +103,9 @@ class UserModel extends Model
         $guestexp = '\xA1\xA1|\xAC\xA3|^Guest|^\xD3\xCE\xBF\xCD|\xB9\x43\xAB\xC8';
         $len = Helper::dstrlen($username);
         if($len > 30 || $len < 3 || preg_match("/\s+|^c:\\con\\con|[%,\*\"\s\<\>\&]|$guestexp/is", $username)) {
-            return FALSE;
+            return false;
         } else {
-            return TRUE;
+            return true;
         }
     }
     
@@ -375,10 +375,9 @@ class UserModel extends Model
         foreach ($uidsarr as $uid) {
             $user = $this->getUserByUserId($uid);
 
-            //@todo 未支持OSS存储
             $path = RC_Upload::upload_path($user['avatar_img']);
-            if (file_exists($path)) {
-                RC_File::delete($path);
+            if (RC_Storage::exists($path)) {
+                RC_Storage::delete($path);
             }
 
             $this->where('user_id', $uid)->update(['avatar_img' => '']);
