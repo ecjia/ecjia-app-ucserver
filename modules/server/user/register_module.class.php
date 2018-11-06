@@ -50,10 +50,29 @@ use Royalcms\Component\Http\Request;
 
 class server_user_register_module extends ApiBase implements ApiHandler
 {
-
+    /**
+     * 用户注册
+     * 已经修复
+     *
+     * @param string username	用户名
+     * @param string password	密码
+     * @param string email	电子邮件
+     * @param integer questionid	安全提问索引
+     * @param string answer	安全提问答案
+     *
+     * @param Request $request
+     * @return int 大于 0:返回用户 ID，表示用户注册成功
+     * -1:用户名不合法
+     * -2:包含不允许注册的词语
+     * -3:用户名已经存在
+     * -4:Email 格式有误
+     * -5:Email 不允许注册
+     * -6:该 Email 已经被注册
+     */
     public function handleRequest(Request $request)
     {
         $this->initInput();
+
         $username   = $this->input('username');
         $password   = $this->input('password');
         $email      = $this->input('email');
