@@ -78,7 +78,7 @@ class server_user_addprotected_module extends ApiBase implements ApiHandler
                 $user = $userModel->getUserByUserName($username);
                 $uid = $user['user_id'];
 
-                RC_DB::insert("REPLACE INTO " . RC_DB::getTableFullName('ucenter_protectedmembers'). " (`uid`, `username`, `appid`, `dateline`, `admin`) values('{$uid}', '{$username}', '{$appid}', '{$this->time}', '{$admin}')");
+                RC_DB::insert("REPLACE INTO " . RC_DB::getTableFullName('ucenter_protectedmembers'). " (`user_id`, `user_name`, `appid`, `dateline`, `admin`) values('{$uid}', '{$username}', '{$appid}', '{$this->time}', '{$admin}')");
             }
 
             return 1;

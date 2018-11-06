@@ -52,6 +52,7 @@ class server_user_logincheck_module extends ApiBase implements ApiHandler
 {
 
     /**
+     * 登录验证
      * 已经修复
      *
      * @param Request $request

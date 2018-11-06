@@ -62,7 +62,7 @@ class server_user_addprotected_module extends ApiBase implements ApiHandler
     {
         $this->initInput();
 
-        $protectedmembers = RC_DB::table('ucenter_protectedmembers')->select('uid', 'username')->groupBy('username')->get();
+        $protectedmembers = RC_DB::table('ucenter_protectedmembers')->select('user_id as uid', 'user_name AS username')->groupBy('user_name')->get();
 
         return $protectedmembers;
     }

@@ -51,9 +51,33 @@ use Royalcms\Component\Http\Request;
 class server_user_edit_module extends ApiBase implements ApiHandler
 {
 
+    /**
+     * 更新用户资料
+     * 已经修复
+     *
+     * @param string username	用户名
+     * @param string oldpw	旧密码
+     * @param string newpw	新密码，如不修改为空
+     * @param string email	Email，如不修改为空
+     * @param bool ignoreoldpw	是否忽略旧密码 1:忽略，更改资料不需要验证密码 0:(默认值) 不忽略，更改资料需要验证密码
+     * @param integer questionid	安全提问索引
+     * @param string answer	安全提问答案
+     *
+     * @param Request $request
+     * @return int
+     * 1:更新成功
+     * 0:没有做任何修改
+     * -1:旧密码不正确
+     * -4:Email 格式有误
+     * -5:Email 不允许注册
+     * -6:该 Email 已经被注册
+     * -7:没有做任何修改
+     * -8:该用户受保护无权限更改
+     */
     public function handleRequest(Request $request)
     {
         $this->initInput();
+
         $username       = $this->input('username');
         $oldpw          = $this->input('oldpw');
         $newpw          = $this->input('newpw');

@@ -51,9 +51,19 @@ use Royalcms\Component\Http\Request;
 class server_user_delete_module extends ApiBase implements ApiHandler
 {
 
+    /**
+     * 删除用户
+     * 已经修复
+     *
+     * @param string/array userid	用户ID
+     *
+     * @param Request $request
+     * @return int 1:成功 0:失败
+     */
     public function handleRequest(Request $request)
     {
         $this->initInput();
+
         $uid = $this->input('uid');
         
         $user = new Ecjia\App\Ucserver\Models\UserModel;

@@ -71,7 +71,7 @@ class server_user_addprotected_module extends ApiBase implements ApiHandler
 
         try {
             foreach($usernames as $username) {
-                RC_DB::table('ucenter_protectedmembers')->where('username', $username)->where('appid', $appid);
+                RC_DB::table('ucenter_protectedmembers')->where('user_name', $username)->where('appid', $appid);
             }
         } catch (\Royalcms\Component\Database\QueryException $e) {
 
