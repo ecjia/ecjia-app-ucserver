@@ -51,7 +51,15 @@ use Royalcms\Component\Http\Request;
 class server_user_addprotected_module extends ApiBase implements ApiHandler
 {
 
-
+    /**
+     * 删除保护用户
+     * 已经修复
+     *
+     * @param string|array $username 保护用户名
+     *
+     * @param Request $request
+     * @return int 1:成功 -1:失败
+     */
     public function handleRequest(Request $request)
     {
         $this->initInput();
