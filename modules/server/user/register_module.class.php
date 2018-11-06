@@ -91,6 +91,11 @@ class server_user_register_module extends ApiBase implements ApiHandler
         }
         
         $uid = $user->add_user($username, $password, $email, 0, $questionid, $answer, $regip);
+
+        //注册成功
+        $ucenterOpenidsModel = new Ecjia\App\Ucserver\Models\UcenterOpenidsModel();
+        $ucenterOpenidsModel->createOpenId($this->app['appid'], $uid, $username);
+
         return $uid;
     }
 }

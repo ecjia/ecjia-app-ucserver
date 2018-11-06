@@ -123,6 +123,16 @@ class server_user_login_module extends ApiBase implements ApiHandler
         if($ip && $login_failedtime && $status <= 0) {
             $userModel->loginfailed($username, $ip);
         }
+
+        if ($status > 0) {
+            //登录成功
+            $ucenterOpenidsModel = new Ecjia\App\Ucserver\Models\UcenterOpenidsModel();
+            if ($ucenterOpenidsModel->hasOpenId($this->app['appid'], $user['user_id'])) {
+                $ucenterOpenidsModel->updateLoginTimes($this->app['appid'], $user['user_id']);
+            } else {
+                $ucenterOpenidsModel->createOpenId($this->app['appid'], $user['user_id'], $user['user_name']);
+            }
+        }
         
         $merge = $status != self::ERROR_USER_NOT_EXIST && !$isuid && $userModel->check_mergeuser($username) ? 1 : 0;
         return array($status, $user['user_name'], $password, $user['email'], $merge);
