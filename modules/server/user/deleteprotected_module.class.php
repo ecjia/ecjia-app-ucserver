@@ -48,7 +48,7 @@ use Ecjia\App\Ucserver\Server\ApiBase;
 use Ecjia\App\Ucserver\Contracts\ApiHandler;
 use Royalcms\Component\Http\Request;
 
-class server_user_addprotected_module extends ApiBase implements ApiHandler
+class server_user_deleteprotected_module extends ApiBase implements ApiHandler
 {
 
     /**
