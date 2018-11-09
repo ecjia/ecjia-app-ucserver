@@ -81,10 +81,14 @@ class ApiBase
         $input = $this->request->input('input');
         if ($input) {
             $input = Helper::authcode($input, 'DECODE', $this->authkey);
+            if (empty($input)) {
+                exit('Access denied for authcode DECODE failed');
+            }
+
             parse_str($input, $this->input);
             $this->input = Helper::daddslashes($this->input, true);
             $agent = $getagent ? $getagent : $this->input['agent'];
-            
+
             if (($getagent && $getagent != $this->input['agent']) || 
                 (!$getagent && md5($_SERVER['HTTP_USER_AGENT']) != $agent)) {
                     
