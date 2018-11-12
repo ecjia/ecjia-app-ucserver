@@ -3,15 +3,14 @@
 namespace Ecjia\App\Ucserver\Controllers;
 
 use Ecjia\App\Ucserver\Server\ApiManager;
-use RC_Package;
+use Royalcms\Component\Routing\Controller as RoyalcmsController;
 
-class IndexController
+class IndexController extends RoyalcmsController
 {
 
     public function __construct()
     {
 
-        RC_Package::package('app::ucenter')->loadConfig('release');
     }
 
     
