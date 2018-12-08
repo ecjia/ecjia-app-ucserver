@@ -63,7 +63,7 @@ class Helper
      * @param string $str
      * @return number
      */
-    public static function dstrlen($str, $charset)
+    public static function dstrlen($str, $charset = 'utf-8')
     {
         if (strtolower($charset) != 'utf-8') {
             return strlen($str);
