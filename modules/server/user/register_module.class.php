@@ -80,8 +80,8 @@ class server_user_register_module extends ApiBase implements ApiHandler
         $user = new UserModel;
         $checkUser = new CheckUser($user);
 
-        if ($this->app['type'] == 'DSCMALL') {
-            $uid = $this->handleDscmallRequest($user, $checkUser);
+        if ($this->app['type'] == 'DSCMALL' || $this->app['type'] == 'ECJIA') {
+            $uid = $this->handleEcjiaRequest($user, $checkUser);
         }
         else {
             $uid = $this->handleDefaultRequest($user, $checkUser);
@@ -95,13 +95,13 @@ class server_user_register_module extends ApiBase implements ApiHandler
     }
 
     /**
-     * 大商创整合特殊处理
+     * ECJia、大商创整合特殊处理
      *
      * @param UserModel $user
      * @param CheckUser $checkUser
      * @return int
      */
-    protected function handleDscmallRequest(UserModel $user, CheckUser $checkUser)
+    protected function handleEcjiaRequest(UserModel $user, CheckUser $checkUser)
     {
         $username   = $this->input('username');
         $password   = $this->input('password');
@@ -122,7 +122,7 @@ class server_user_register_module extends ApiBase implements ApiHandler
             }
         }
 
-        $uid = $user->addUserByMobile($username, $password, $email, 0, $questionid, $answer, $regip);
+        $uid = $user->addUserByMobile($username, $password, $email, $questionid, $answer, $regip);
 
         return $uid;
     }
@@ -148,7 +148,7 @@ class server_user_register_module extends ApiBase implements ApiHandler
             return $status;
         }
 
-        $uid = $user->addUser($username, $password, $email, 0, $questionid, $answer, $regip);
+        $uid = $user->addUser($username, $password, $email, $questionid, $answer, $regip);
 
         return $uid;
     }
