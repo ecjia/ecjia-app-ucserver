@@ -60,10 +60,16 @@ class server_user_login_module extends ApiBase implements ApiHandler
      * 用户登录
      * 已经修复
      *
-     * @param string $username 用户名 / 用户 ID
+     * @param string $username 用户名 / 用户 ID / 手机号 / 邮箱
      * @param string $password 密码
-     * @param bool $isuid 是否使用用户 ID登录 1:使用用户 ID登录 0:(默认值) 使用用户名登录
-     * @param bool $checkques 是否验证安装提问 1:验证安全提问 0:(默认值) 不验证安全提问
+     * @param bool $isuid 是否使用用户ID登录
+     *              0:(默认值) 使用用户名登录
+     *              1:使用用户ID登录
+     *              2:使用邮箱登录
+     *              6:使用手机号登录
+     * @param bool $checkques 是否验证安装提问
+     *              1:验证安全提问
+     *              0:(默认值)不验证安全提问
      * @param integer $questionid 安全提问索引
      * @param string $answer 安全提问答案
      *
@@ -120,7 +126,7 @@ class server_user_login_module extends ApiBase implements ApiHandler
 
         //验证安全问题跳过
 
-        if($ip && $login_failedtime && $status <= 0) {
+        if ($ip && $login_failedtime && $status <= 0) {
             $userModel->loginfailed($username, $ip);
         }
 
