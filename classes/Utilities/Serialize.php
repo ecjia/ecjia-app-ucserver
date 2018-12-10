@@ -23,14 +23,16 @@ class Serialize
     }
 
 
-    public static function xml_unserialize(& $xml, $isnormal = FALSE) {
+    public static function xml_unserialize(& $xml, $isnormal = false)
+    {
         $xml_parser = new XML($isnormal);
         $data = $xml_parser->parse($xml);
         $xml_parser->__destruct();
         return $data;
     }
 
-    public static function xml_serialize($arr, $htmlon = FALSE, $isnormal = FALSE, $level = 1) {
+    public static function xml_serialize($arr, $htmlon = false, $isnormal = false, $level = 1)
+    {
         $s = $level == 1 ? "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\r\n<root>\r\n" : '';
         $space = str_repeat("\t", $level);
         foreach($arr as $k => $v) {
