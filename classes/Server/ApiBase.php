@@ -38,6 +38,21 @@ class ApiBase
      */
     const UC_USER_EMAIL_EXISTS = -6;
 
+    /**
+     * Mobile格式无效
+     */
+    const UC_USER_MOBILE_FORMAT_ILLEGAL = -7;
+
+    /**
+     * Mobile限制使用
+     */
+    const UC_USER_MOBILE_ACCESS_ILLEGAL = -8;
+
+    /**
+     * Mobile已经存在
+     */
+    const UC_USER_MOBILE_EXISTS = -9;
+
 
     /**
      * @var \Royalcms\Component\Http\Request

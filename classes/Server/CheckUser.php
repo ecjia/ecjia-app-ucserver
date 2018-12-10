@@ -14,8 +14,10 @@ class CheckUser
     }
 
     /**
+     * 检查邮箱是否存在，支持排除用户名
+     *
      * @param $email
-     * @param string $username
+     * @param string $username 排除用户名
      * @return int
      */
     public function checkEmail($email, $username = '') 
@@ -30,6 +32,26 @@ class CheckUser
     }
 
     /**
+     * 检查手机号是否存在，支持排除用户名
+     *
+     * @param string $mobile 手机号
+     * @param string $username 排除用户名
+     * @return int
+     */
+    public function checkMobile($mobile, $username = '')
+    {
+        if (! $this->user->checkMobielFormat($mobile)) {
+            return ApiBase::UC_USER_MOBILE_FORMAT_ILLEGAL;
+        } elseif ($this->user->checkMobileExists($mobile, $username)) {
+            return ApiBase::UC_USER_MOBILE_EXISTS;
+        } else {
+            return 1;
+        }
+    }
+
+    /**
+     * 检查用户名是否存在
+     *
      * @param $username
      * @return int
      */
@@ -56,6 +78,8 @@ class CheckUser
     {
         return $this->user->canDoLogin($username, $ip);
     }
+
+
 
     
 }

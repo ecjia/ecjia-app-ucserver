@@ -131,10 +131,39 @@ class UserModel extends Model
         return $email;
     }
 
-
     public function check_emailformat($email)
     {
         return strlen($email) > 6 && strlen($email) <= 60 && preg_match('/^([a-z0-9\-_.+]+)@([a-z0-9\-]+[.][a-z0-9\-.]+)$/', $email);
+    }
+
+    /**
+     * 检查手机号的格式
+     *
+     * @param $mobile
+     * @return mixed
+     */
+    public function checkMobielFormat($mobile)
+    {
+        return \Ecjia\App\Sms\Helper::check_mobile($mobile);
+    }
+
+    /**
+     * 检查手机号是否存在，支持排除用户名
+     *
+     * @param string $mobile
+     * @param string $username 排除用户名
+     * @return mixed
+     */
+    public function checkMobileExists($mobile, $username = '')
+    {
+        $model = $this->where('mobile_phone', $mobile);
+        if ($username) {
+            $model->where('username', '<>', $username);
+        }
+
+        $mobile = $model->pluck('mobile_phone');
+
+        return $mobile;
     }
 
     /**
@@ -249,13 +278,12 @@ class UserModel extends Model
      * @param $username
      * @param $password
      * @param $email
-     * @param int $uid
      * @param string $questionid
      * @param string $answer
      * @param string $regip
      * @return int
      */
-    public function add_user($username, $password, $email, $uid = 0, $questionid = '', $answer = '', $regip = '') 
+    public function addUser($username, $password, $email, $questionid = '', $answer = '', $regip = '')
     {
         $regip      = empty($regip) ? RC_Ip::client_ip() : $regip;
         $salt       = substr(uniqid(rand()), -6);
@@ -270,10 +298,6 @@ class UserModel extends Model
             'ec_salt'   => $salt
         ];
         
-        if ($uid) {
-//            $data['user_id'] = intval($uid);
-        }
-        
         $model = $this->create($data);
         if ($model) {
             $uid = $model->user_id;
@@ -281,6 +305,43 @@ class UserModel extends Model
             $uid = 0;
         }
         
+        return $uid;
+    }
+
+    /**
+     * 添加用户，用户名使用手机号
+     *
+     * @param string $username 手机号
+     * @param string $password
+     * @param string $email
+     * @param string $questionid
+     * @param string $answer
+     * @param string $regip
+     * @return int
+     */
+    public function addUserByMobile($mobile, $password, $email, $questionid = '', $answer = '', $regip = '')
+    {
+        $regip      = empty($regip) ? RC_Ip::client_ip() : $regip;
+        $salt       = substr(uniqid(rand()), -6);
+        $password   = md5(md5($password).$salt);
+
+        $data = [
+            'user_name'     => $mobile,
+            'mobile_phone'  => $mobile,
+            'password'      => $password,
+            'email'         => $email,
+            'last_ip'       => $regip,
+            'reg_time'      => RC_Time::gmtime(),
+            'ec_salt'       => $salt
+        ];
+
+        $model = $this->create($data);
+        if ($model) {
+            $uid = $model->user_id;
+        } else {
+            $uid = 0;
+        }
+
         return $uid;
     }
 

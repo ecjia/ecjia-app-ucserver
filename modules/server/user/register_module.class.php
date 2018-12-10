@@ -47,6 +47,8 @@
 use Ecjia\App\Ucserver\Server\ApiBase;
 use Ecjia\App\Ucserver\Contracts\ApiHandler;
 use Royalcms\Component\Http\Request;
+use Ecjia\App\Ucserver\Models\UserModel;
+use Ecjia\App\Ucserver\Server\CheckUser;
 
 class server_user_register_module extends ApiBase implements ApiHandler
 {
@@ -54,11 +56,11 @@ class server_user_register_module extends ApiBase implements ApiHandler
      * 用户注册
      * 已经修复
      *
-     * @param string username	用户名
-     * @param string password	密码
-     * @param string email	电子邮件
-     * @param integer questionid	安全提问索引
-     * @param string answer	安全提问答案
+     * @param string $username	用户名
+     * @param string $password	密码
+     * @param string $email	电子邮件
+     * @param integer $questionid	安全提问索引
+     * @param string $answer	安全提问答案
      *
      * @param Request $request
      * @return int 大于 0:返回用户 ID，表示用户注册成功
@@ -74,23 +76,16 @@ class server_user_register_module extends ApiBase implements ApiHandler
         $this->initInput();
 
         $username   = $this->input('username');
-        $password   = $this->input('password');
-        $email      = $this->input('email');
-        $questionid = $this->input('questionid');
-        $answer     = $this->input('answer');
-        $regip      = $this->input('regip');
-        
-        $user = new Ecjia\App\Ucserver\Models\UserModel;
-        $checkUser = new Ecjia\App\Ucserver\Server\CheckUser($user);
-        
-        if (($status = $checkUser->checkUserName($username)) < 0) {
-            return $status;
+
+        $user = new UserModel;
+        $checkUser = new CheckUser($user);
+
+        if ($this->app['type'] == 'DSCMALL') {
+            $uid = $this->handleDscmallRequest($user, $checkUser);
         }
-        if (($status = $checkUser->checkEmail($email)) < 0) {
-            return $status;
+        else {
+            $uid = $this->handleDefaultRequest($user, $checkUser);
         }
-        
-        $uid = $user->add_user($username, $password, $email, 0, $questionid, $answer, $regip);
 
         //注册成功
         $ucenterOpenidsModel = new Ecjia\App\Ucserver\Models\UcenterOpenidsModel();
@@ -98,6 +93,66 @@ class server_user_register_module extends ApiBase implements ApiHandler
 
         return $uid;
     }
+
+    /**
+     * 大商创整合特殊处理
+     *
+     * @param UserModel $user
+     * @param CheckUser $checkUser
+     * @return int
+     */
+    protected function handleDscmallRequest(UserModel $user, CheckUser $checkUser)
+    {
+        $username   = $this->input('username');
+        $password   = $this->input('password');
+        $email      = $this->input('email');
+        $questionid = $this->input('questionid');
+        $answer     = $this->input('answer');
+        $regip      = $this->input('regip');
+
+        //username是手机号，必须是
+        if ( ($status = $checkUser->checkMobile($username) ) < 0) {
+            return $status;
+        }
+
+        //允许email为空，不填写
+        if (! empty($email)) {
+            if ( ($status = $checkUser->checkEmail($email)) < 0 ) {
+                return $status;
+            }
+        }
+
+        $uid = $user->addUserByMobile($username, $password, $email, 0, $questionid, $answer, $regip);
+
+        return $uid;
+    }
+
+    /**
+     * @param UserModel $user
+     * @param CheckUser $checkUser
+     * @return int
+     */
+    protected function handleDefaultRequest(UserModel $user, CheckUser $checkUser)
+    {
+        $username   = $this->input('username');
+        $password   = $this->input('password');
+        $email      = $this->input('email');
+        $questionid = $this->input('questionid');
+        $answer     = $this->input('answer');
+        $regip      = $this->input('regip');
+
+        if (($status = $checkUser->checkUserName($username)) < 0) {
+            return $status;
+        }
+        if (($status = $checkUser->checkEmail($email)) < 0) {
+            return $status;
+        }
+
+        $uid = $user->addUser($username, $password, $email, 0, $questionid, $answer, $regip);
+
+        return $uid;
+    }
+
 }
 
 
