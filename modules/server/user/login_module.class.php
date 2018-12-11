@@ -67,7 +67,7 @@ class server_user_login_module extends ApiBase implements ApiHandler
      *              1:使用用户ID登录
      *              2:使用邮箱登录
      *              6:使用手机号登录
-     * @param bool $checkques 是否验证安装提问
+     * @param bool $checkques 是否验证安全提问
      *              1:验证安全提问
      *              0:(默认值)不验证安全提问
      * @param integer $questionid 安全提问索引
@@ -83,9 +83,9 @@ class server_user_login_module extends ApiBase implements ApiHandler
         $isuid          = $this->input('isuid');
         $username       = $this->input('username');
         $password       = $this->input('password');
-        $checkques      = $this->input('checkques');
-        $questionid     = $this->input('questionid');
-        $answer         = $this->input('answer');
+        $checkques      = $this->input('checkques'); //已经废弃
+        $questionid     = $this->input('questionid'); //已经废弃
+        $answer         = $this->input('answer'); //已经废弃
         $ip             = $this->input('ip');
 
         /**
@@ -125,7 +125,6 @@ class server_user_login_module extends ApiBase implements ApiHandler
         }
 
         //验证安全问题跳过
-
         if ($ip && $login_failedtime && $status <= 0) {
             $userModel->loginfailed($username, $ip);
         }
@@ -139,9 +138,35 @@ class server_user_login_module extends ApiBase implements ApiHandler
                 $ucenterOpenidsModel->createOpenId($this->app['appid'], $user['user_id'], $user['user_name']);
             }
         }
-        
+
         $merge = $status != self::ERROR_USER_NOT_EXIST && !$isuid && $userModel->check_mergeuser($username) ? 1 : 0;
-        return array($status, $user['user_name'], $password, $user['email'], $merge);
+        $result = array($status, $user['user_name'], $password, $user['email'], $merge);
+
+        if ($this->app['type'] == 'DSCMALL' || $this->app['type'] == 'ECJIA') {
+            return $this->handleEcjiaRequest($result, $user);
+        }
+        else {
+            return $this->handleDefaultRequest($result);
+        }
+    }
+
+    /**
+     * ECJia、大商创整合特殊处理
+     *
+     * @return array
+     */
+    protected function handleEcjiaRequest(array $result, $user)
+    {
+        $result[2] = $user['mobile_phone'];
+        return $result;
+    }
+
+    /**
+     * @return array
+     */
+    protected function handleDefaultRequest(array $result)
+    {
+        return $result;
     }
 }
 
