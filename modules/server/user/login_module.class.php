@@ -137,6 +137,8 @@ class server_user_login_module extends ApiBase implements ApiHandler
             } else {
                 $ucenterOpenidsModel->createOpenId($this->app['appid'], $user['user_id'], $user['user_name']);
             }
+
+            $user['openid'] = $ucenterOpenidsModel->getOpenIdByUserId($this->app['appid'], $user['user_id']);
         }
 
         $merge = $status != self::ERROR_USER_NOT_EXIST && !$isuid && $userModel->check_mergeuser($username) ? 1 : 0;
@@ -157,7 +159,7 @@ class server_user_login_module extends ApiBase implements ApiHandler
      */
     protected function handleEcjiaRequest(array $result, $user)
     {
-        $result[2] = $user['mobile_phone'];
+        $result[0] = $user['openid'];
         return $result;
     }
 
