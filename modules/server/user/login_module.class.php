@@ -141,15 +141,26 @@ class server_user_login_module extends ApiBase implements ApiHandler
             $user['openid'] = $ucenterOpenidsModel->getOpenIdByUserId($this->app['appid'], $user['user_id']);
         }
 
-        $merge = $status != self::ERROR_USER_NOT_EXIST && !$isuid && $userModel->check_mergeuser($username) ? 1 : 0;
+        if ($status != self::ERROR_USER_NOT_EXIST && !$isuid && $userModel->check_mergeuser($username)) {
+            $merge = 1;
+        } else {
+            $merge = 0;
+        }
+
         $result = array($status, $user['user_name'], $password, $user['email'], $merge);
 
-        if ($this->app['type'] == 'DSCMALL' || $this->app['type'] == 'ECJIA') {
-            return $this->handleEcjiaRequest($result, $user);
+        if ($status > 0) {
+
+            if ($this->app['type'] == 'DSCMALL' || $this->app['type'] == 'ECJIA') {
+                $result = $this->handleEcjiaRequest($result, $user);
+            }
+            else {
+                $result = $this->handleDefaultRequest($result);
+            }
+
         }
-        else {
-            return $this->handleDefaultRequest($result);
-        }
+
+        return $result;
     }
 
     /**
