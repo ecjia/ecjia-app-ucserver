@@ -25,7 +25,7 @@
 				<span class="caret"></span>
 			</a>
 			<ul class="dropdown-menu">
-				<li><a class="button_remove" data-toggle="ecjiabatch" data-idClass=".checkbox:checked" data-url='{url path="ucenter/admin/batch_remove"}' data-msg="您确定要删除选中的应用吗？" data-noSelectMsg="请选择要删除的应用" data-name="appid" href="javascript:;"><i class="fontello-icon-trash"></i>删除</a></li>
+				<li><a class="button_remove" data-toggle="ecjiabatch" data-idClass=".checkbox:checked" data-url='{url path="ucenter/admin/batch_remove"}' data-msg='{t domain="ucserver"}您确定要删除选中的应用吗？{/t}' data-noSelectMsg='{t domain="ucserver"}请选择要删除的应用{/t}' data-name="appid" href="javascript:;"><i class="fontello-icon-trash"></i>{t domain="ucserver"}删除{/t}</a></li>
 			</ul>
 		</div>
 	</form>

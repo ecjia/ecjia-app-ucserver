@@ -43,7 +43,7 @@
 					<label class="control-label">{t domain="ucserver"}应用的主URL：{/t}</label>
 					<div class="controls">
 						<input class="w350" type="text" name="url" value="{$data.url}"/>
-						<span class="input-must">{lang key='system::system.require_field'}</span>
+						<span class="input-must"><span class="require-field" style="color:#FF0000,">*</span></span>
 					</div>
 					<div class="m_t30 controls help-block">{t domain="ucserver"}该应用与 UCenter 通信的接口 URL，结尾请不要加“/” ，应用的通知只发送给主 URL{/t}</div>
 				</div>
